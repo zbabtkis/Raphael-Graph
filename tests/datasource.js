@@ -9,7 +9,7 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     test("Can add a model", function() {
         var datasource = new Datasource();
         
-        datasource.add({label: "hello", value: 1});
+        datasource.add({date: "hello", value: 1});
                                         
         ok(datasource.length() === 1);
     });
@@ -17,16 +17,17 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
 
     test("Datasource calculates top model", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
+        datasource.zoom(3);
         deepEqual(datasource.topValue(), data[1]);
     });
     
     test("Can get model", function() {
-        var model = {label: 'hello', value: 100};
+        var model = {date: 'hello', value: 100};
         var datasource = new Datasource(model);
         
         deepEqual(model, datasource.get(model));
@@ -34,14 +35,14 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Model removes unwanted schema", function() {
         var data = {
-            label: "hello",
+            date: "hello",
             value: 1,
             meTo: "no"
         };
         
         var datasource = new Datasource(data);
         
-        notDeepEqual(data, datasource.get({label: 'hello'}));
+        notDeepEqual(data, datasource.get({date: 'hello'}));
     });
     
     test("Initial position is end of array", function() { 
@@ -52,9 +53,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Can set position", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         datasource.position(2);
@@ -64,9 +65,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Can set zoom by number", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         datasource.position(3);
@@ -77,9 +78,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Can set position by direction", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         datasource.position(2);
@@ -93,9 +94,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Can set zoom by direction", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         // Set zoom to known value.
@@ -124,9 +125,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Zoom can't be greater than length", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         
@@ -136,9 +137,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Position can't be greater than length", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         
@@ -148,9 +149,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Position with zoom greater than length should max out", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         
@@ -163,9 +164,9 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Can filter results by setting zoom", function() {
         var data = [
-            {label: "hello", value: 1},
-            {label: 'goodbye', value: 1000},
-            {label: 'what', value: 100}
+            {date: "hello", value: 1},
+            {date: 'goodbye', value: 1000},
+            {date: 'what', value: 100}
         ];
         var datasource = new Datasource(data);
         
@@ -183,30 +184,32 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
     
     test("Can sort by comparator", function() {
         var data = [
-            {label: "hello", value: 1, compare: 1},
-            {label: 'goodbye', value: 1000, compare: 3},
-            {label: 'what', value: 100, compare:2}
+            {date: "hello", value: 1, compare: 1},
+            {date: 'goodbye', value: 1000, compare: 3},
+            {date: 'what', value: 100, compare:2}
         ];
         var datasource = new Datasource(data);
         
         datasource.sort("DESC");
         datasource.zoom(3);
         
-        deepEqual(datasource.selected()[2], {label: 'goodbye', value: 1000, compare: 3});
+        deepEqual(datasource.selected()[2], {date: 'goodbye', value: 1000, compare: 3});
         
         datasource.sort("ASC");
         datasource.zoom(3);
         
-        deepEqual(datasource.selected()[0], {label: 'goodbye', value: 1000, compare: 3});
+        deepEqual(datasource.selected()[0], {date: 'goodbye', value: 1000, compare: 3});
     });
     
     test("Can generate marks", function() {
         var data = [
-            {label: "hello", value: 1, compare: 1},
-            {label: 'goodbye', value: 1000, compare: 3},
-            {label: 'what', value: 100, compare:2}
+            {date: "hello", value: 1, compare: 1},
+            {date: 'goodbye', value: 1000, compare: 3},
+            {date: 'what', value: 100, compare:2}
         ];
         var datasource = new Datasource(data);
+        
+        datasource.zoom(3);
         
         deepEqual(datasource.marks(), [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]);
     });

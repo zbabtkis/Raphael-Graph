@@ -1,34 +1,28 @@
 define(['View/DataView'], function(View) {
     var model = [
         {
-            label: "hello"
+            date: new Date("January 1, 2013")
           , value: 20
-          , compare: 1
         }, 
         {
-            label: 'goodbye'
+            date: new Date("February 5, 2013")
           , value: 2
-          , compare: 2
         },
         {
-            label: 'goodbye'
+            date: new Date("March 10, 2013")
           , value: 2
-          , compare: 9
         },
         {
-            label: "what"
+            date: new Date("April 1, 2013")
           , value: 50
-          , compare: 50
         }, 
         {
-            label: 'there'
+            date: new Date("May 2, 2013")
           , value: 29
-          , compare: 5
         },
         {
-            label: 'no'
+            date: new Date("June 1, 2013")
           , value: 100
-          , compare: 29
         }
     ];
     var chart = new View({el: 'target', model: model});

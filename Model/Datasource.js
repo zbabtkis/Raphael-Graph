@@ -8,7 +8,7 @@ define(['framework'], function(_) {
         
         models = [];
         
-        schema = ['value', 'label', 'compare'];
+        schema = ['value', 'date', 'compare'];
         
         function getSafeModel(m) {
             return _.pick(m, schema);
@@ -67,12 +67,12 @@ define(['framework'], function(_) {
                 return _.findWhere(models, params);
             },
             topValue: function() {
-                return _.max(models, function(model) { return model.value; });
+                return _.max(this.selected(), function(model) { return model.value; });
             },
             marks: function() {
-                var top = this.topValue(),
-                    step = top.value/10;
-                return _.range(0, top.value +1, step);
+                var step = Math.ceil(this.topValue().value/10)
+                  , top  = step * 10;
+                return _.range(0, top +1, step);
             },
             length: function() {
                 return models.length;
@@ -80,10 +80,10 @@ define(['framework'], function(_) {
             sort: function(direction) {
                 models = _.sortBy(models, function(model) {
                     if(direction === 'DESC') {
-                        return (model.compare || model.label)
+                        return (model.compare || model.date)
                     }
                     
-                    return -(model.compare || model.label)
+                    return -(model.compare || model.date);
                 });
             }
         };

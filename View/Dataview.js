@@ -4,7 +4,9 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery'], function(Model, _
     var View = function(options) {
         var model
           , defaults
-          , current;
+          , current
+          , _setEdge
+          , api;
         
         defaults = {
             el: null,
@@ -30,7 +32,6 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery'], function(Model, _
                 
         current = model.selected();
         
-        
         api = {
             responsive: function() {
                 this.responsive = true;
@@ -42,7 +43,7 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery'], function(Model, _
                   , position
                   , marks;
                 
-                options.width = this.responsive ? window.innerWidth : options.width;
+                options.width = this.responsive ? options.el.offsetWidth : options.width;
                 
                 options.el.innerHTML = "";
                 
@@ -62,13 +63,14 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery'], function(Model, _
                         line.attr('stroke', '#fff');
                     }
                     
+                    label = paper.text(currPos.left, options.height - LABEL_OFFSET + 30, m.date.getMonth()).attr('stroke', '#fff');
                     
                     circle = paper.circle(currPos.left, currPos.top, 5);
                     
                     circle.attr({
-                        fill: '#09f',
-                        stroke: '#222',
-                        title: m.label
+                        fill: '#f1c40f',
+                        stroke: '#f39c12',
+                        title: m.date
                     });
                     
                     _this.addTip(circle, m, paper);
@@ -79,12 +81,20 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery'], function(Model, _
                 marks= model.marks();
                 _.each(marks, function(mark) {
                     paper.text(20, _this.top(mark), mark).attr('stroke', '#fff');
-                    paper.path("M40 " + _this.top(mark) + " L" + (options.width - 40) + " " + _this.top(mark)).attr('stroke', '#333').toBack(); 
+                    paper.path("M40 " + _this.top(mark) + " L" + (options.width - 40) + " " + _this.top(mark)).attr('stroke', '#34495e').toBack(); 
                 });
                 
                 var background = paper.rect(0, 0, options.width, options.height);
-                background.attr('fill', '#222');
+                background.attr('fill', '#2c3e50');
                 background.toBack();
+                
+                background.mousemove(function(e) {
+                    _setEdge.find(e, paper);
+                });
+                
+                background.click(function(e) {
+                    _setEdge.select(e, paper);
+                });
             },
             addTip: function(circle, model, ctx) {
                 var popup;
@@ -97,7 +107,7 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery'], function(Model, _
                         circle.animate({fill: '#fff'}, 200);
                     },
                     function(e) {
-                        circle.animate({fill: '#09f'}, 200);
+                        circle.animate({fill: '#f1c40f'}, 200);
                         popup.animate({'fill-opacity':0}, 200, 'linear', function() {popup.remove(); });
                 });
             },
@@ -108,6 +118,34 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery'], function(Model, _
                 return Math.round(options.height - (value * (options.height - 80) / model.topValue().value) - LABEL_OFFSET);
             }
         };
+        
+        _setEdge = (function(_this) {
+            var line, edges = [];
+                
+            var api =  {
+                find: function(e, paper, isSelected) {
+                    if(line && !isSelected) {
+                        line.remove();
+                    }
+                    line = paper.path('M' + e.x + ' 0L' + e.x + ' ' + options.height).attr('stroke', '#2ecc71');
+                },
+                reverseLookup: function(position) {
+                    //var old = (options.width - 40) * model.selected().length / (position * LABEL_OFFSET);
+                    return (position / options.width);
+                },
+                select: function(e, paper) {
+                    edges.push(e.x);
+                    if(edges.length === 2) {
+                       alert(this.reverseLookup(edges[0]));
+                    }
+                    this.find(e, paper, true);
+                }
+            };
+                            
+            _.bindAll(api, 'find', 'select');
+                            
+            return api;
+        })(api)
         
         return api;
                 
