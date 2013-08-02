@@ -1,0 +1,19 @@
+{
+  "name": "ChartrJS",
+  "version": "0.0.0",
+  "main": "main.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "qunit": "~1.12.0",
+    "jquery": "~2.0.3",
+    "requirejs": "~2.1.8",
+    "domready": "latest",
+    "raphael": "~2.1.0",
+    "eve": "https://github.com/adobe-webplatform/eve.git#~0.2.4",
+    "underscore": "~1.5.1"
+  }
+}
