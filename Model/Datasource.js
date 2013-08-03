@@ -66,6 +66,9 @@ define(['framework'], function(_) {
             get: function(params) {
                 return _.findWhere(models, params);
             },
+            all: function() {
+                return models;
+            },
             topValue: function() {
                 return _.max(this.selected(), function(model) { return model.value; });
             },
@@ -85,6 +88,56 @@ define(['framework'], function(_) {
                     
                     return -(model.compare || model.date);
                 });
+            },
+            months: function() {
+                var minYear, minYearMonths, minMonths,
+                    maxYear, maxYearMonths, maxMonths,
+                    monthRange = [];
+                
+                minYear = _.min(this.all(), function(model) { 
+                        return model.date.getYear(); 
+                    })
+                    .date.getFullYear();
+                minYearMonths = _.reject(this.all(), function(model) { 
+                        return model.date.getFullYear() !== minYear; 
+                    });
+                minMonth = _.min(minYearMonths, function(model) { 
+                        return model.date.getMonth(); 
+                    })
+                    .date.getMonth();
+                
+                maxYear = _.max(this.all(), function(model) { 
+                        return model.date.getFullYear(); 
+                    })
+                    .date.getFullYear();
+                maxYearMonths = _.reject(this.all(), function(model) { 
+                        return model.date.getFullYear() !== maxYear; 
+                    });
+                maxMonth = _.max(maxYearMonths, function(model) { 
+                        return model.date.getMonth(); 
+                    })
+                    .date.getMonth();
+                
+                firstYear = true;
+                                                                
+                for(var year = minYear; year <= maxYear; year++) {
+                    if(firstYear && year !== maxYear) {
+                        for(var month = minMonth; month <= 11; month++) {
+                            monthRange.push(month + '/' + year);
+                        }
+                    } else if(!firstYear && year === maxYear) {
+                        for(var month = 0; month <= maxMonth; month++) {
+                            monthRange.push(month + '/' + year);
+                        }
+                    } else if(firstYear && year === maxYear) {
+                        for(var month = minMonth; month <= maxMonth; month++) {
+                            monthRange.push(month + '/' + year);
+                        }
+                    }
+                    firstYear = false;
+                }
+                                
+                return monthRange;
             }
         };
         

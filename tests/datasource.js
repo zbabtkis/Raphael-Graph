@@ -213,4 +213,64 @@ define(['Model/Datasource', 'framework'], function(Datasource, _) {
         
         deepEqual(datasource.marks(), [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]);
     });
+    
+    test("Can calculate months", function() {
+        var data = [
+            {date: new Date("January 31, 2013"), value: 1},
+            {date: new Date("February 5, 2013"), value: 10},
+            {date: new Date("March 2, 2013"), value: 3},
+        ];
+        var datasource = new Datasource(data);
+            
+        deepEqual(datasource.months(), ['0/2013', '1/2013', '2/2013']);
+    });
+    
+    test("Months stay sorted", function() {
+        var data = [
+            {date: new Date("January 31, 2013"), value: 1},
+            {date: new Date("February 5, 2013"), value: 10},
+            {date: new Date("March 2, 2013"), value: 3},
+        ];
+        var datasource = new Datasource(data);
+            
+        datasource.sort("DESC");
+            
+        deepEqual(datasource.months(), ['0/2013', '1/2013', '2/2013']);
+    });
+    
+    test("Month range can span years", function() {
+        var data = [
+            {date: new Date("January 31, 2013"), value: 1},
+            {date: new Date("December 5, 2012"), value: 10},
+            {date: new Date("March 2, 2013"), value: 3},
+        ];
+            
+        var datasource = new Datasource(data);
+            
+        deepEqual(datasource.months(), ['11/2012', '0/2013', '1/2013','2/2013']);
+    });
+    
+    test("Month range can span 1 month", function() {
+        var data = [
+            {date: new Date("January 2, 2013"), value: 2},
+            {date: new Date("January 3, 2013"), value: 3},
+            {date: new Date("January 10, 2013"), value: 10}
+        ];
+        
+        var datasource = new Datasource(data);
+        
+        deepEqual(datasource.months(), ['0/2013']);
+    });
+    
+    test("Months can span months in year", function() {
+        var data = [
+            {date: new Date("January 5, 2013"), value: 5},
+            {date: new Date("May 5, 2013"), value: 5},
+            {date: new Date("June 5, 2013"), value: 5},
+        ];
+            
+        var datasource = new Datasource(data);
+            
+        deepEqual(datasource.months(), ['0/2013', '1/2013', '2/2013', '3/2013','4/2013','5/2013']);
+    });
 });
