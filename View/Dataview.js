@@ -1,4 +1,4 @@
-define(['Model/Datasource', 'View/Timeline', 'framework', 'raphael', 'jquery'], function(Model, Timeline,  _, Raphael, $) {
+define(['Model/Datasource', 'framework', 'raphael', 'jquery', 'hammer'], function(Model,  _, Raphael, $, Hammer) {
     var LABEL_OFFSET = 50;
     
     var View = function(options) {
@@ -25,6 +25,7 @@ define(['Model/Datasource', 'View/Timeline', 'framework', 'raphael', 'jquery'], 
         options = _.defaults((options || {}), defaults);
         
         options.el = document.getElementById(options.el);
+        options.$el = $(options.el);
         
         // Used to hold position of previous point.
         _position = {}; 
@@ -37,15 +38,36 @@ define(['Model/Datasource', 'View/Timeline', 'framework', 'raphael', 'jquery'], 
         
         model.zoom(options.zoom);
         model.sort(options.sort);
+
+        window.model = model;
         
-        timeline = new Timeline(options, model);
-        timeline.render();
         paper = new Raphael(options.el, options.width, options.height);
-        
+
+        Hammer(options.el).on('pinch-in', function(e) {
+            var zoom = 1;
+
+            /**var point = {
+                width: options.width,
+                offset: e.offsetX
+            };*/
+
+            model.zoom(model.zoom() + zoom);
+        });
+
+        options.$el.on('mousewheel', function(e) {
+            var zoom = e.originalEvent.wheelDeltaY > 0 ? 1 : -1;
+
+            var point = {
+                width: options.width,
+                offset: e.offsetX
+            };
+
+            model.zoom(model.zoom() + zoom, point);
+        });
+
         api = {
             responsive: function() {
                 this.responsive = true;
-                timeline.responsive();
                 $(window).resize($.proxy(this, 'render'));
             },
             render: function() {
@@ -53,7 +75,7 @@ define(['Model/Datasource', 'View/Timeline', 'framework', 'raphael', 'jquery'], 
                   , position
                   , current
                   , marks;
-                
+
                 current = model.selected();
                 marks   = model.marks();
                                
@@ -70,6 +92,9 @@ define(['Model/Datasource', 'View/Timeline', 'framework', 'raphael', 'jquery'], 
                 _position = null;
             }
         };
+
+        model.on('change:zoom', api.render, api);
+        model.on('change:position', api.render, api);
         
         _left = function(value) {
             return Math.round(

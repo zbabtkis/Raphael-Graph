@@ -5,6 +5,7 @@ require.config({
       , raphael: 'components/raphael/raphael'
       , eve: 'components/eve/eve'
       , framework: 'components/underscore/underscore-min'
+      , hammer: 'components/hammerjs/dist/hammer.min'
     },
     shim: {
         raphael: {
@@ -17,6 +18,9 @@ require.config({
         },
         framework: {
             exports: '_'
+        },
+        hammer: {
+            exports: 'Hammer'
         }
     }
 });

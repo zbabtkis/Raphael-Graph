@@ -15,6 +15,33 @@ define(['framework'], function(_) {
         }
         
         api = {
+            __events: [],
+
+            emit: function(evt) {
+                var _this = this;
+
+                this.__events[evt] = this.__events[evt] || [];
+                _.each(this.__events[evt], function(val) {
+                    if(val.ctx) {
+                        val.callback.call(val.ctx, _this);
+                    } else {
+                        val.callback(_this);
+                    }
+                });
+
+                return this;
+            },
+
+            on: function(evt, callback, ctx) {                           
+                this.__events[evt] = this.__events[evt] || [];
+                this.__events[evt].push({
+                    callback: callback,
+                    ctx: ctx
+                });
+
+                return this;
+            },
+
             add: function(obj) {
                 if(_.isArray(obj)) {
                     _.each(obj, function(m) {
@@ -26,13 +53,17 @@ define(['framework'], function(_) {
                 
                 return this;
             },
+
             selected: function() {
                 var last = _.last(models, this.position())
                   , res  = _.first(last, this.zoom());
                 
                 return res;
             },
+
             position: function(value) {
+                var _position = position;
+
                 if(_.isNumber(value)) {
                     position = value;
                 } else if(_.isString(value)) {
@@ -44,14 +75,36 @@ define(['framework'], function(_) {
                 if(position > models.length) {
                     position = models.length;
                 }
+
+                if(position !== _position) {
+                    this.emit('change:position');
+                }
+
                 return position;
             },
-            zoom: function(value) {
-                if(_.isNumber(value)) {
-                    zoom = value;
-                } else if(_.isString(value)) {
-                    (value === "in") ? zoom-- : zoom++;
+
+            getPoint: function(point) {
+                var index, indexVal, first;
+
+                index = Math.floor(point.offset * this.selected().length / point.width);
+                indexVal = this.get(this.selected()[index]);
+
+                if(_.isUndefined(indexVal)) {
+                    indexVal = this.get(_.last(this.selected()));
                 }
+
+                return models.length - _.indexOf(models, indexVal);
+            },
+
+            zoom: function(value, point) {
+                var _zoom = zoom;
+
+                if(point) {
+                    this.position(this.getPoint(point));
+                }
+
+                zoom = _.isNumber(value) ? value : zoom;
+
                 if(zoom < 0) {
                     zoom = 0;
                 }
@@ -61,25 +114,35 @@ define(['framework'], function(_) {
                 if(zoom > position) {
                     zoom = this.position(zoom);
                 }
+                if(zoom !== _zoom) {
+                    this.emit('change:zoom');
+                }
+
                 return zoom;
             },
+
             get: function(params) {
                 return _.findWhere(models, params);
             },
+
             all: function() {
                 return models;
             },
+
             topValue: function() {
                 return _.max(this.selected(), function(model) { return model.value; });
             },
+
             marks: function() {
                 var step = Math.ceil(this.topValue().value/10)
                   , top  = step * 10;
                 return _.range(0, top +1, step);
             },
+
             length: function() {
                 return models.length;
             },
+
             sort: function(direction) {
                 models = _.sortBy(models, function(model) {
                     if(direction === 'DESC') {
@@ -89,6 +152,7 @@ define(['framework'], function(_) {
                     return -(model.compare || model.date);
                 });
             },
+
             months: function() {
                 var minYear, minYearMonths, minMonths,
                     maxYear, maxYearMonths, maxMonths,
