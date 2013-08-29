@@ -1,0 +1,32 @@
+{
+  "name": "domready",
+  "repo": "ded/domready",
+  "description": "bullet proof DOM ready method",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ded/domready",
+  "author": {
+    "name": "Dustin Diaz",
+    "email": "dustin@dustindiaz.com",
+    "url": "http://dustindiaz.com"
+  },
+  "keywords": [
+    "domready",
+    "dom"
+  ],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "main": "ready.js",
+  "scripts": [
+    "ready.js"
+  ],
+  "gitHead": "b3ba502dcd41b67fc2fcd06416b9d0be27a8dce2",
+  "readme": "domReady\n--------\nIt's easy. Works like this:\n\n``` js\ndomready(function () {\n  // dom is loaded!\n})\n```\n\nBrowser support\n---------------\n\n  * IE6+\n  * Firefox 2+\n  * Safari 3+\n  * Chrome *\n  * Opera *\n\nBuilding\n--------\n\n    $ npm install -dev\n    $ make\n    $ open tests/test.html\n\nIncluding with Ender\n--------------------\nDon't already have [Ender](http://ender.no.de)? Ender relies on [Node](http://nodejs.org), and [NPM](http://npmjs.org). Install it like this:\n\n    npm install ender -g\n\nOnce you're good with that. Include domready in your package:\n\n    ender add domready\n\nThen use it like this:\n\n``` js\n$.domReady(function () {\n  $('body').html('<p>boosh</p>')\n})\n\n// or\n\n$(document).ready(function () {\n  $('body').html('<p>boosh</p>')\n})\n```",
+  "readmeFilename": "README.md",
+  "_id": "domready@0.2.11",
+  "commit": "b3ba502dcd41b67fc2fcd06416b9d0be27a8dce2",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ded/domready.git"
+  }
+}

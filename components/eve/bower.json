@@ -1,0 +1,8 @@
+{
+  "name": "eve",
+  "version": "0.2.4",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe-webplatform/eve.git"
+  }
+}
