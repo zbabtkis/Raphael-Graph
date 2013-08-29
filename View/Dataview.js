@@ -51,6 +51,8 @@ define(['Model/Datasource', 'framework', 'raphael', 'jquery', 'hammer'], functio
                 offset: e.offsetX
             };*/
 
+            console.log(e);
+
             model.zoom(model.zoom() + zoom);
         });
 
